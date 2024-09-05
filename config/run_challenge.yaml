@@ -1,0 +1,23 @@
+session_name: fabrics_background
+shell_command_before:
+- cd /home/mspahn/catkin_robothon
+- source devel/setup.zsh
+- export ROS_MASTER_URI=http://172.16.0.1:11311
+- export ROS_IP=172.16.0.3
+windows:
+  - window_name: platonics_vision
+    layout: tiled
+    panes:
+      - roslaunch platonics_vision depth_camera.launch rviz:=False
+      - rosrun platonics_vision sift_service
+      - rosrun platonics_vision iterative_sift_service
+  - window_name: lfd
+    layout: tiled
+    panes: 
+      - rosrun skills_manager lfd_servers
+      - roslaunch rosbridge_server rosbridge_websocket.launch
+  - window_name: utils
+    layout: tiled
+    panes: 
+      - rosrun platonics_tools nodes_checker
+      - roslaunch spacenav_node classic.launch

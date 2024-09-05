@@ -1,0 +1,188 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    padding: 10px;
+}
+
+.main-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.main-button:hover {
+    background-color: darkred;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    padding: 10px;
+    gap: 20px;
+}
+
+.content-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.camera-visualization, .force-display {
+    background-color: white;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.camera-visualization img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.bottom-section {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 20px;
+}
+
+.debug-message {
+    margin-bottom: 1px; /* Spacing between messages */
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.debug-window {
+    background-color: white;
+    border: 2px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 10px;
+    padding: 10px;
+    flex: 1;
+    font-size: 13px;
+    color: #333;
+    height: 100px;
+    display: flex;
+    flex-direction: column-reverse; /* Newest messages at the bottom */
+    justify-content: flex-start;
+}
+
+.chat-window {
+    background-color: white;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+    height: 100px;
+    overflow-y: auto;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+
+.menu-item {
+  background-color: #fff;
+  padding: 15px;
+  margin: 5px 0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  cursor: grab;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.menu-item:active {
+  cursor: grabbing;
+  background-color: #e6e6e6;
+}
+
+.menu-item.dragging {
+  opacity: 0.5;
+}
+
+.menu-item.over {
+  border: 2px dashed #7b9eff;
+}
+
+
+/* Basic styling for the select */
+select {
+  appearance: none; /* Removes default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  background-color: #fff;
+  border: 2px solid #ddd;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 250px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  position: relative;
+}
+
+/* Adding a custom arrow */
+select:after {
+  content: '▼';
+  position: absolute;
+  right: 20px;
+  pointer-events: none;
+}
+
+/* Add focus styles */
+select:focus {
+  outline: none;
+  border-color: #7b9eff;
+}
+
+/* Customize the option elements */
+select option {
+  padding: 10px;
+}
+
+/* Add hover effect for the dropdown */
+select:hover {
+  border-color: #ccc;
+}
+
+#trash-bin {
+  width: 150px;
+  height: 150px;
+  border: 2px dashed red;
+  text-align: center;
+  line-height: 150px;
+  margin-top: 20px;
+}
+
+

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platonics GUI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <button class="main-button" onclick="app.publishMessage()">Start</button>
+        <button class="main-button" onclick="app.sendHome()">Home</button>
+        <button class="main-button">Abort</button>
+    </div>
+    <div class="content">
+      <!-- stack items in the next div vertically-->
+      <div class="content-vertical">
+        <select id="trajectories_dropdown" class="dropdown" onchange="app.selectTrajectory()">
+        </select>
+        <button class="main-button" onclick="app.refreshTrajectories()">Refresh</button>
+        <div class="content">
+          <button class="main-button" onclick="app.execute()">Execute</button>
+          <input type="checkbox" id="localize_button" onclick="app.toggleLocalize()">
+        </div>
+
+      </div>
+      <div class="menu" id="menuContainer">
+        <!-- Trajectories will be dynamically added here -->
+      </div>
+      <div id="trash-bin">🗑️ Drag here to delete</div>
+      <div class="content-vertical">
+        <!--simple text window to type the name of a recording-->
+        <input type="text" id="recording_name" placeholder="Recording Name">
+        <button class="main-button" onclick="app.record()">Record</button>
+      </div>
+    </div>
+    <div class="content">
+        <div class="camera-visualization">
+          <img id="ros_img" alt="WEB CAM"/>
+        </div>
+        <div class="force-display">Force Display</div>
+    </div>
+
+    <div class="bottom-section">
+        <div class="debug-window" id="debug_topic_display">Debug Messages</div>
+        <div class="chat-window">Chat</div>
+    </div>
+    <script src="./app.ts"></script>
+</body>
+</html>
+
