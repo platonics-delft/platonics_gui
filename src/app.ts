@@ -195,6 +195,13 @@ class App {
         this.refreshTrajectories();
     }
 
+    public cancel() {
+      this.execute_client.cancel();
+      this.record_client.cancel();
+      this.home_client.cancel();
+      this.enable_all_main_buttons();
+    }
+
     public toggleLocalize() {
       this.localize = !this.localize;
       console.log("Localize: " + this.localize);
