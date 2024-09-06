@@ -21,3 +21,4 @@ windows:
     panes: 
       - rosrun platonics_tools nodes_checker
       - roslaunch spacenav_node classic.launch
+      - cd src/platonics_gui; npm run start

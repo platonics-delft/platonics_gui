@@ -40,7 +40,7 @@ body {
 .content-vertical {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 5px;
 }
 
 .camera-visualization, .force-display {
@@ -183,6 +183,31 @@ select:hover {
   text-align: center;
   line-height: 150px;
   margin-top: 20px;
+}
+
+.status-light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: gray; /* Default color */
+    margin-right: 10px;
+}
+
+/* Specific colors for different statuses */
+.status-active {
+    background-color: red;
+}
+
+.status-inactive {
+    background-color: gray;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 

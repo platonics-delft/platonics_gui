@@ -24,13 +24,21 @@ class App {
         }
         this.trashBin = document.getElementById("trash-bin");
         this.localize_button = document.getElementById("localize_button");
+        this.templateElement = document.getElementById("template_name") as HTMLInputElement;
+
+        this.statusRecordingElement = document.getElementById("statusRecording");
+        this.statusExecutingElement = document.getElementById("statusExecuting");
+        this.statusPausedElement = document.getElementById("statusPaused");
+        this.statusSpiralingElement = document.getElementById("statusSpiraling");
+        this.statusCameraFeedbackElement = document.getElementById("statusCameraFeedback");
+        this.statusStiffnessElement = document.getElementById("statusStiffness");
+        this.statusGripperElement = document.getElementById("statusGripper");
 
         this.trajectoriesDropdownElement = document.getElementById("trajectories_dropdown") as HTMLSelectElement;
         if (!this.trajectoriesDropdownElement) {
             throw new Error(`Element with ID trajectories_dropdown not found.`);
         }
         this.availableTrajectories = [];
-        this.availableTrajectories.push("mariano");
 
         this.record_text_field = document.getElementById("recording_name") as HTMLInputElement;
 
@@ -89,6 +97,39 @@ class App {
           this.recording = false;
           this.refreshTrajectories();
           this.enable_all_main_buttons();
+          this.statusRecordingElement.classList.remove("status-active");
+        }
+        this.record_goal.on('feedback', (feedback) => {
+          if (feedback.paused === true) {
+            this.statusPausedElement.classList.add("status-active");
+          }
+          if (feedback.spiraling === true) {
+            this.statusSpiralingElement.classList.add("status-active");
+          }
+          if (feedback.camera_feedback === true) {
+            this.statusCameraFeedbackElement.classList.add("status-active");
+          }
+          if (feedback.stiffness === true) {
+            this.statusStiffnessElement.classList.add("status-active");
+          }
+          if (feedback.gripper === true) {
+            this.statusGripperElement.classList.add("status-active");
+          }
+          if (feedback.paused === false) {
+            this.statusPausedElement.classList.remove("status-active");
+          }
+          if (feedback.spiraling === false) {
+            this.statusSpiralingElement.classList.remove("status-active");
+          }
+          if (feedback.camera_feedback === false) {
+            this.statusCameraFeedbackElement.classList.remove("status-active");
+          }
+          if (feedback.stiffness === false) {
+            this.statusStiffnessElement.classList.remove("status-active");
+          }
+          if (feedback.gripper === false) {
+            this.statusGripperElement.classList.remove("status-active");
+          }
         }
 
         // execute client
@@ -103,12 +144,43 @@ class App {
           goalMessage: {
             skill_names: [],
             localize_box: false,
+            template_file_name: 
+            {
+              data: "default",
+            }
           },
         });
         this.execute_goal.on('result', () => {
           console.log("Execute success");
           this.executing = false;
           this.enable_all_main_buttons();
+          this.statusExecutingElement.classList.remove("status-active");
+        }
+        this.execute_goal.on('feedback', (feedback) => {
+          if (feedback.spiraling === true) {
+            this.statusSpiralingElement.classList.add("status-active");
+          }
+          if (feedback.camera_feedback === true) {
+            this.statusCameraFeedbackElement.classList.add("status-active");
+          }
+          if (feedback.stiffness === true) {
+            this.statusStiffnessElement.classList.add("status-active");
+          }
+          if (feedback.gripper === true) {
+            this.statusGripperElement.classList.add("status-active");
+          }
+          if (feedback.spiraling === false) {
+            this.statusSpiralingElement.classList.remove("status-active");
+          }
+          if (feedback.camera_feedback === false) {
+            this.statusCameraFeedbackElement.classList.remove("status-active");
+          }
+          if (feedback.stiffness === false) {
+            this.statusStiffnessElement.classList.remove("status-active");
+          }
+          if (feedback.gripper === false) {
+            this.statusGripperElement.classList.remove("status-active");
+          }
         }
         this.executing = false;
         this.recording = false;
@@ -254,12 +326,15 @@ class App {
 
 
     public execute() {
+      this.statusExecutingElement.classList.add("status-active");
       var items = document.getElementsByClassName("menu-item");
       var skill_names: string[] = [];
       for (var i = 0; i < items.length; i++) {
         skill_names.push(items[i].textContent || ""); // Ensure textContent is not null
       }
       console.log("Executing: " + skill_names);
+      console.log("Template name: " + this.templateElement.value);
+      this.execute_goal.goalMessage.goal.template_file_name.data = this.templateElement.value;
       this.execute_goal.goalMessage.goal.skill_names = skill_names;
       this.execute_goal.goalMessage.goal.localize_box = this.localize;
       this.disable_all_main_buttons();
@@ -269,6 +344,7 @@ class App {
 
 
     public record() {
+      this.statusRecordingElement.classList.add("status-active");
       this.record_goal.goalMessage.goal.skill_name = this.record_text_field.value;
       this.record_goal.send();
     }

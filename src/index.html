@@ -18,20 +18,55 @@
         <select id="trajectories_dropdown" class="dropdown" onchange="app.selectTrajectory()">
         </select>
         <button class="main-button" onclick="app.refreshTrajectories()">Refresh</button>
-        <div class="content">
+        <div class="content_vertical">
+          <div class="content">
+            <input type="text" id="template_name" placeholder="Template Name">
+            <input type="checkbox" id="localize_button" onclick="app.toggleLocalize()">
+          </div>
           <button class="main-button" onclick="app.execute()">Execute</button>
-          <input type="checkbox" id="localize_button" onclick="app.toggleLocalize()">
         </div>
 
       </div>
       <div class="menu" id="menuContainer">
         <!-- Trajectories will be dynamically added here -->
       </div>
-      <div id="trash-bin">🗑️ Drag here to delete</div>
+      <div id="trash-bin">🗑️</div>
       <div class="content-vertical">
         <!--simple text window to type the name of a recording-->
         <input type="text" id="recording_name" placeholder="Recording Name">
         <button class="main-button" onclick="app.record()">Record</button>
+      </div>
+      <div class="content-vertical">
+        <div class="status-container">
+          <div id="statusExecuting" class="status-light"></div>
+          <span>Executing</span>
+        </div>
+        <div class="status-container">
+          <div id="statusRecording" class="status-light"></div>
+          <span>Recording</span>
+        </div>
+        <div class="status-container">
+          <div id="statusPaused" class="status-light"></div>
+          <span>Paused</span>
+        </div>
+        <div class="status-container">
+          <div id="statusSpiraling" class="status-light"></div>
+          <span>Spiraling</span>
+        </div>
+      </div>
+      <div class="content-vertical">
+        <div class="status-container">
+          <div id="statusCameraFeedback" class="status-light"></div>
+          <span>CameraFeedback</span>
+        </div>
+        <div class="status-container">
+          <div id="statusStiffness" class="status-light"></div>
+          <span>Stiffness</span>
+        </div>
+        <div class="status-container">
+          <div id="statusGripper" class="status-light"></div>
+          <span>Gripper Status</span>
+        </div>
       </div>
     </div>
     <div class="content">
