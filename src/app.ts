@@ -187,6 +187,19 @@ class App {
         this.homing = false;
         this.localize = false;
 
+        this.abort_gripper_client = new ActionClient({
+          ros: this.ros,
+          serverName: '/abort_gripper',
+          actionName: 'skills_manager/AbortGripperAction',
+        });
+
+        this.abort_gripper_goal = new Goal({
+          actionClient: this.abort_gripper_client,
+          goalMessage: {
+            open : false,
+          },
+        });
+
         this.list_trajectories = new Service({
           ros: this.ros,
           name: '/list_trajectories',
@@ -200,6 +213,10 @@ class App {
       this.record_client.cancel();
       this.home_client.cancel();
       this.enable_all_main_buttons();
+    }
+
+    public abort_gripper() {
+      this.abort_gripper_goal.send();
     }
 
     public toggleLocalize() {
@@ -296,8 +313,9 @@ class App {
     }
 
     private updateTrajectoriesDropdown() {
+      const sortedTrajectories = [...this.availableTrajectories].sort();
       this.trajectoriesDropdownElement.innerHTML = '';
-      this.availableTrajectories.forEach((trajectory) => {
+      sortedTrajectories.forEach((trajectory) => {
           const option = document.createElement('option');
           option.value = trajectory;
           option.textContent = trajectory;

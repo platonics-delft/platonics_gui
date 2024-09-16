@@ -5,20 +5,27 @@ shell_command_before:
 - export ROS_MASTER_URI=http://172.16.0.1:11311
 - export ROS_IP=172.16.0.3
 windows:
+  - window_name: controller
+    layout: tiled
+    shell_command_before:
+      - ssh platonics@172.16.0.1
+      - source ~/Documents/eurobin_workspace/devel/setup.bash
+    panes:
+      - roslaunch franka_human_friendly_controllers cartesian_variable_impedance_controller.launch robot_ip:=172.16.0.2 arm_id:='panda' gui:=False
   - window_name: platonics_vision
     layout: tiled
     panes:
-      - roslaunch platonics_vision depth_camera.launch rviz:=False
+      - roslaunch platonics_vision depth_camera.launch rviz:=False --wait
       - rosrun platonics_vision sift_service
       - rosrun platonics_vision iterative_sift_service
   - window_name: lfd
     layout: tiled
     panes: 
       - rosrun skills_manager lfd_servers
-      - roslaunch rosbridge_server rosbridge_websocket.launch
+      - roslaunch rosbridge_server rosbridge_websocket.launch --wait
   - window_name: utils
     layout: tiled
     panes: 
       - rosrun platonics_tools nodes_checker
-      - roslaunch spacenav_node classic.launch
+      - roslaunch spacenav_node classic.launch --wait
       - cd src/platonics_gui; npm run start
