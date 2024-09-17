@@ -1,4 +1,6 @@
 import { Ros, Topic, ActionClient, Goal, Service, ServiceRequest} from "roslib";
+import errorSnippet from "./audio/error.mp3";
+import succesSnippet from "./audio/success.mp3";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -13,6 +15,7 @@ class App {
     private trajectoriesDropdownElement: HTMLSelectElement;
 
     constructor(rosUrl: string) {
+        this.loadAudioSnippets();
         this.debugTopicDisplayElement = document.getElementById("debug_topic_display");
         if (!this.debugTopicDisplayElement) {
             throw new Error(`Element with ID debug_topic_display not found.`);
@@ -22,6 +25,8 @@ class App {
         if (!this.cameraElement) {
             throw new Error(`Element with ID ros_img not found.`);
         }
+
+        this.cameraCorrectionsElement = document.getElementById("img_corrections");
         this.trashBin = document.getElementById("trash-bin");
         this.localize_button = document.getElementById("localize_button");
         this.templateElement = document.getElementById("template_name") as HTMLInputElement;
@@ -48,11 +53,23 @@ class App {
             name: "/debug_topic",
             messageType: "std_msgs/String",
         });
+        this.recording_topic = new Topic({
+          ros: this.ros,
+          name: "/recording",
+          messageType: "std_msgs/Bool",
+        });
         this.camera_topic = new Topic({
             ros: this.ros,
             name: '/camera/color/image_raw/compressed',
             messageType: 'sensor_msgs/CompressedImage',
         });
+
+        this.camera_corrections_topic = new Topic({
+            ros: this.ros,
+            name: '/SIFT_corrections/commpressed',
+            messageType: 'sensor_msgs/CompressedImage',
+        });
+
 
         this.order_menu = document.getElementById("menuContainer");
 
@@ -74,7 +91,6 @@ class App {
           },
         });
         this.home_goal.on('result', () => {
-          console.log("Home success");
           this.homing = false;
           this.enable_all_main_buttons();
         }
@@ -93,7 +109,6 @@ class App {
           },
         });
         this.record_goal.on('result', () => {
-          console.log("Record success");
           this.recording = false;
           this.refreshTrajectories();
           this.enable_all_main_buttons();
@@ -151,7 +166,6 @@ class App {
           },
         });
         this.execute_goal.on('result', () => {
-          console.log("Execute success");
           this.executing = false;
           this.enable_all_main_buttons();
           this.statusExecutingElement.classList.remove("status-active");
@@ -200,6 +214,13 @@ class App {
           },
         });
 
+        this.save_sift_template = new Service({
+          ros: this.ros,
+          name: '/saving_sift_template',
+          serviceType: 'platonics_vision/SavingTemplate',
+        });
+
+
         this.list_trajectories = new Service({
           ros: this.ros,
           name: '/list_trajectories',
@@ -209,6 +230,7 @@ class App {
     }
 
     public cancel() {
+      this.playSnippet('error');
       this.execute_client.cancel();
       this.record_client.cancel();
       this.home_client.cancel();
@@ -221,7 +243,6 @@ class App {
 
     public toggleLocalize() {
       this.localize = !this.localize;
-      console.log("Localize: " + this.localize);
       if (this.localize) {
         this.localize_button.style.backgroundColor = "green";
       } else {
@@ -233,7 +254,6 @@ class App {
 
     public selectTrajectory() {
       var skill_name = this.trajectoriesDropdownElement.value;
-      console.log("Selected trajectory: " + this.execute_goal.goalMessage.goal.skill_name);
       const newItem = document.createElement("div");
       newItem.classList.add("menu-item");
       newItem.setAttribute("draggable", "true");
@@ -303,6 +323,33 @@ class App {
 
     }
 
+    public saveSiftTemplate() {
+      const request = {template_name: {data: this.templateElement.value}};
+      request.template_name.data = this.templateElement.value;
+      this.save_sift_template.callService(request, (result) => {
+        console.log("Saving template: " + result.success);
+      });
+    }
+
+    private playSnippet(snippetKey: string) {
+      const audio = this.audioSnippets[snippetKey];
+      if (audio) {
+          audio.currentTime = 0; // Reset playback to the beginning
+          audio.play();
+      } else {
+          console.error(`Audio snippet ${snippetKey} not found`);
+      }
+    }
+
+    private loadAudioSnippets() {
+      this.audioSnippets = {
+          success: new Audio(succesSnippet),
+          error: new Audio(errorSnippet),
+      };
+      // set preload to 'auto' for all audio snippets
+      //Object.values(this.audioSnippets).forEach(audio => audio.preload = 'auto');
+    }
+
 
     public refreshTrajectories() {
       const request = new ServiceRequest({});
@@ -357,8 +404,6 @@ class App {
       for (var i = 0; i < items.length; i++) {
         skill_names.push(items[i].textContent || ""); // Ensure textContent is not null
       }
-      console.log("Executing: " + skill_names);
-      console.log("Template name: " + this.templateElement.value);
       this.execute_goal.goalMessage.goal.template_file_name.data = this.templateElement.value;
       this.execute_goal.goalMessage.goal.skill_names = skill_names;
       this.execute_goal.goalMessage.goal.localize_box = this.localize;
@@ -380,19 +425,15 @@ class App {
         });
     }
 
-    /*
-    private setupRosTopic() {
-        this.debug_topic.subscribe((message) => {
-            console.log("Received debug message on /debug_topic: " + message.data);
-            this.debugTopicDisplayElement.textContent = message.data;
+    private setupCameraCorrectionsRosTopic() {
+      this.correction_topic.subscribe((message: Message) => {
+            this.cameraCorrectionElement.src = 'data:image/jpeg:base64' + message.data;
         });
     }
-    */
 
 
    private setupRosTopic() {
     this.debug_topic.subscribe((message) => {
-        console.log("Received debug message on /debug_topic: " + message.data);
         
         // Create a new message element
         const newMessage = document.createElement('div');
@@ -413,6 +454,19 @@ class App {
         }
       });
     }
+
+    public startDataRecord() {
+      this.recording_topic.publish({
+        data: true,
+      });
+    }
+
+    public stopDataRecord() {
+      this.recording_topic.publish({
+        data: false,
+      });
+    }
+
 
     public log(message: string) {
         this.debug_topic.publish({

@@ -13,6 +13,10 @@
         <button class="abort-button" onclick="app.cancel()">Abort</button>
         <button class="abort-button" onclick="app.abort_gripper()">Gripper</button>
     </div>
+    <audio id="audioPlayer" controls>
+      <source src="./audio/success.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
     <div class="content">
       <!-- stack items in the next div vertically-->
       <div class="content-vertical">
@@ -25,6 +29,7 @@
             <input type="checkbox" id="localize_button" onclick="app.toggleLocalize()">
           </div>
           <button class="main-button" onclick="app.execute()">Execute</button>
+          <button class="main-button" onclick="app.saveSiftTemplate()">Template</button>
         </div>
 
       </div>
@@ -68,13 +73,23 @@
           <div id="statusGripper" class="status-light"></div>
           <span>Gripper Status</span>
         </div>
+        <div class="status-container">
+          <div id="compensatorStatus" class="status-light"></div>
+          <span>Compensating</span>
+        </div>
+      </div>
+      <div class="content-vertical">
+        <button class="main-button" onclick="app.startDataRecord()">StartDataRecord</button>
+        <button class="main-button" onclick="app.stopDataRecord()">StopDataRecord</button>
       </div>
     </div>
     <div class="content">
         <div class="camera-visualization">
           <img id="ros_img" alt="WEB CAM"/>
         </div>
-        <div class="force-display">Force Display</div>
+        <div class="camera-visualization">
+          <img id="img_corrections" alt="CORRECTIONS"/>
+        </div>
     </div>
 
     <div class="bottom-section">
