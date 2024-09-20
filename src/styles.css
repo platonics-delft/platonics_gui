@@ -55,6 +55,12 @@ body {
     gap: 5px;
 }
 
+.content-horizontal {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
 .camera-visualization, .force-display {
     background-color: white;
     border: 2px solid #ccc;
@@ -119,7 +125,7 @@ body {
 .menu {
   display: flex;
   flex-direction: column;
-  width: 200px;
+  width: 100%;
 }
 
 .menu-item {
@@ -158,7 +164,7 @@ select {
   padding: 12px;
   border-radius: 8px;
   font-size: 16px;
-  width: 250px;
+  width: 100%;
   cursor: pointer;
   transition: border-color 0.3s;
   position: relative;
@@ -189,7 +195,7 @@ select:hover {
 }
 
 #trash-bin {
-  width: 150px;
+  width: 100%;
   height: 150px;
   border: 2px dashed red;
   text-align: center;

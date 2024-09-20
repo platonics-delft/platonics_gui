@@ -11,21 +11,21 @@
         <button class="main-button" onclick="app.publishMessage()">Start</button>
         <button class="main-button" onclick="app.sendHome()">Home</button>
         <button class="abort-button" onclick="app.cancel()">Abort</button>
-        <button class="abort-button" onclick="app.abort_gripper()">Gripper</button>
+        <button class="abort-button" onclick="app.abort_gripper()">Abort Gripper</button>
+        <button class="abort-button" onclick="app.home_gripper()">Home Gripper</button>
     </div>
     <div class="content">
       <!-- stack items in the next div vertically-->
       <div class="content-vertical">
+        <select id="template_dropdown" class="dropdown" onchange="app.selectTemplate()">
         <select id="trajectories_dropdown" class="dropdown" onchange="app.selectTrajectory()">
+        <select id="skills_dropdown" class="dropdown" onchange="app.selectSkill()">
         </select>
-        <button class="main-button" onclick="app.refreshTrajectories()">Refresh</button>
-        <div class="content_vertical">
-          <div class="content">
-            <input type="text" id="template_name" placeholder="Template Name">
-            <input type="checkbox" id="localize_button" onclick="app.toggleLocalize()">
-          </div>
+        <button class="main-button" onclick="app.refreshTemplates()">Refresh</button>
+        <div class='content-horizontal'>
           <button class="main-button" onclick="app.execute()">Execute</button>
-          <button class="main-button" onclick="app.saveSiftTemplate()">Template</button>
+          <button class="main-button" onclick="app.execute_skill()">ExecuteSkill</button>
+          <input type="checkbox" id="localize_button" onclick="app.toggleLocalize()">
         </div>
 
       </div>
@@ -35,8 +35,10 @@
       <div id="trash-bin">🗑️</div>
       <div class="content-vertical">
         <!--simple text window to type the name of a recording-->
+        <input type="text" id="template_name_record" placeholder="Template Name">
         <input type="text" id="recording_name" placeholder="Recording Name">
-        <button class="main-button" onclick="app.record()">Record</button>
+        <button class="main-button" onclick="app.record()">Record Trajectory</button>
+        <button class="main-button" onclick="app.saveSiftTemplate()">Record Template</button>
       </div>
       <div class="content-vertical">
         <div class="status-container">

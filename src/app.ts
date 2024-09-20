@@ -26,10 +26,11 @@ class App {
             throw new Error(`Element with ID ros_img not found.`);
         }
 
-        this.cameraCorrectionsElement = document.getElementById("img_corrections");
+        this.templatesDropdownElement = document.getElementById("template_dropdown") as HTMLSelectElement;
+        this.cameraCorrectionElement = document.getElementById("img_corrections");
         this.trashBin = document.getElementById("trash-bin");
         this.localize_button = document.getElementById("localize_button");
-        this.templateElement = document.getElementById("template_name") as HTMLInputElement;
+        this.templateRecordElement = document.getElementById("template_name_record") as HTMLInputElement;
 
         this.statusRecordingElement = document.getElementById("statusRecording");
         this.statusExecutingElement = document.getElementById("statusExecuting");
@@ -40,10 +41,13 @@ class App {
         this.statusGripperElement = document.getElementById("statusGripper");
 
         this.trajectoriesDropdownElement = document.getElementById("trajectories_dropdown") as HTMLSelectElement;
+        this.skillsDropdownElement = document.getElementById("skills_dropdown") as HTMLSelectElement;
         if (!this.trajectoriesDropdownElement) {
             throw new Error(`Element with ID trajectories_dropdown not found.`);
         }
         this.availableTrajectories = [];
+        this.availableSkills = [];
+        this.availableTemplates = [];
 
         this.record_text_field = document.getElementById("recording_name") as HTMLInputElement;
 
@@ -64,9 +68,9 @@ class App {
             messageType: 'sensor_msgs/CompressedImage',
         });
 
-        this.camera_corrections_topic = new Topic({
+        this.camera_correction_topic = new Topic({
             ros: this.ros,
-            name: '/SIFT_corrections/commpressed',
+            name: '/SIFT_corrections',
             messageType: 'sensor_msgs/CompressedImage',
         });
 
@@ -76,6 +80,7 @@ class App {
 
         this.setupRosTopic();
         this.setupCameraRosTopic();
+        this.setupCameraCorrectionsRosTopic();
         // home client
         this.home_client = new ActionClient({
           ros: this.ros,
@@ -159,7 +164,7 @@ class App {
           goalMessage: {
             skill_names: [],
             localize_box: false,
-            template_file_name: 
+            template_name: 
             {
               data: "default",
             }
@@ -196,6 +201,29 @@ class App {
             this.statusGripperElement.classList.remove("status-active");
           }
         }
+        // execute client
+        this.execute_skill_client = new ActionClient({
+          ros: this.ros,
+          serverName: '/lfdExecuteSkill',
+          actionName: 'skills_manager/LfdExecuteSkillAction',
+        });
+
+        this.execute_skill_goal = new Goal({
+          actionClient: this.execute_client,
+          goalMessage: {
+            skill_name: [],
+            localize_box: false,
+            template_name: 
+            {
+              data: "default",
+            }
+          },
+        });
+        this.execute_skill_goal.on('result', () => {
+          this.executing = false;
+          this.enable_all_main_buttons();
+          this.statusExecutingElement.classList.remove("status-active");
+        }
         this.executing = false;
         this.recording = false;
         this.homing = false;
@@ -226,7 +254,17 @@ class App {
           name: '/list_trajectories',
           serviceType: 'skills_manager/ListTrajectories',
         });
-        this.refreshTrajectories();
+        this.list_templates = new Service({
+          ros: this.ros,
+          name: '/list_templates',
+          serviceType: 'skills_manager/ListTemplates',
+        });
+        this.list_skills = new Service({
+          ros: this .ros,
+          name: '/list_skills',
+          serviceType: 'skills_manage/ListSkills',
+        });
+        this.refreshTemplates();
     }
 
     public cancel() {
@@ -237,7 +275,17 @@ class App {
       this.enable_all_main_buttons();
     }
 
+    public home_gripper() {
+      this.abort_gripper_client.cancel();
+      this.log("Homing gripper");
+      this.abort_gripper_goal.goalMessage.goal.open = true;
+      this.abort_gripper_goal.send();
+    }
+
     public abort_gripper() {
+      this.abort_gripper_client.cancel();
+      this.log("Aborting gripper");
+      this.abort_gripper_goal.goalMessage.goal.open = false;
       this.abort_gripper_goal.send();
     }
 
@@ -259,8 +307,26 @@ class App {
       newItem.setAttribute("draggable", "true");
       newItem.textContent = skill_name;
       this.order_menu.appendChild(newItem);
-
       this.addDragAndDropHandlers(newItem);
+    }
+
+    public selectSkill() {
+      var skill_name = this.skillsDropdownElement.value;
+      const newItem = document.createElement("div");
+      newItem.classList.add("menu-item");
+      newItem.setAttribute("draggable", "true");
+      newItem.textContent = "SKILL_"+ skill_name;
+      this.order_menu.appendChild(newItem);
+      this.addDragAndDropHandlers(newItem);
+    }
+
+    public clearMenu() {
+      this.order_menu.innerHTML = "";
+    }
+
+    public selectTemplate() {
+      this.refreshTrajectories();
+      this.refreshSkills();
     }
 
     public addDragAndDropHandlers(item) {
@@ -324,8 +390,7 @@ class App {
     }
 
     public saveSiftTemplate() {
-      const request = {template_name: {data: this.templateElement.value}};
-      request.template_name.data = this.templateElement.value;
+      const request = {template_name: {data: this.templateRecordElement.value}};
       this.save_sift_template.callService(request, (result) => {
         console.log("Saving template: " + result.success);
       });
@@ -346,16 +411,46 @@ class App {
           success: new Audio(succesSnippet),
           error: new Audio(errorSnippet),
       };
-      // set preload to 'auto' for all audio snippets
-      //Object.values(this.audioSnippets).forEach(audio => audio.preload = 'auto');
     }
 
 
     public refreshTrajectories() {
       const request = new ServiceRequest({});
+      request.template_name = this.templatesDropdownElement.value
       this.list_trajectories.callService(request, (result) => {
         this.availableTrajectories = result.trajectories;
+        this.availableTrajectories.unshift("---select---");
         this.updateTrajectoriesDropdown();
+      });
+    }
+
+    public refreshSkills() {
+      const request = new ServiceRequest({});
+      request.template_name = this.templatesDropdownElement.value
+      this.list_skills.callService(request, (result) => {
+        this.availableSkills = result.skills;
+        this.availableSkills.unshift("---select---");
+        this.updateSkillsDropdown();
+      });
+    }
+
+    public refreshTemplates() {
+      this.list_templates.callService(new ServiceRequest({}), (result) => {
+        this.availableTemplates = result.templates;
+        this.availableTemplates.unshift("---select---");
+        this.updateTemplatesDropdown();
+      });
+      this.emptyMenu();
+    }
+
+    private updateTemplatesDropdown() {
+      const sortedTemplates = [...this.availableTemplates].sort();
+      this.templatesDropdownElement.innerHTML = '';
+      sortedTemplates.forEach((template) => {
+          const option = document.createElement('option');
+          option.value = template;
+          option.textContent = template;
+          this.templatesDropdownElement.appendChild(option);
       });
     }
 
@@ -367,6 +462,17 @@ class App {
           option.value = trajectory;
           option.textContent = trajectory;
           this.trajectoriesDropdownElement.appendChild(option);
+      });
+    }
+
+    private updateSkillsDropdown() {
+      const sortedSkills = [...this.availableSkills].sort();
+      this.skillsDropdownElement.innerHTML = '';
+      sortedSkills.forEach((skill) => {
+          const option = document.createElement('option');
+          option.value = skill;
+          option.textContent = skill;
+          this.skillsDropdownElement.appendChild(option);
       });
     }
 
@@ -396,6 +502,16 @@ class App {
       this.home_goal.send();
     }
 
+    public execute_skill() {
+      var items = document.getElementsByClassName("menu-item");
+      this.execute_skill_goal.goalMessage.goal.skill_name = items[0].textContent || "";
+      this.execute_skill_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
+      this.execute_skill_goal.goalMessage.goal.localize_box = this.localize;
+      this.disable_all_main_buttons();
+      this.execute_goal.send();
+    }
+
+
 
     public execute() {
       this.statusExecutingElement.classList.add("status-active");
@@ -404,7 +520,7 @@ class App {
       for (var i = 0; i < items.length; i++) {
         skill_names.push(items[i].textContent || ""); // Ensure textContent is not null
       }
-      this.execute_goal.goalMessage.goal.template_file_name.data = this.templateElement.value;
+      this.execute_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
       this.execute_goal.goalMessage.goal.skill_names = skill_names;
       this.execute_goal.goalMessage.goal.localize_box = this.localize;
       this.disable_all_main_buttons();
@@ -416,6 +532,7 @@ class App {
     public record() {
       this.statusRecordingElement.classList.add("status-active");
       this.record_goal.goalMessage.goal.skill_name = this.record_text_field.value;
+      this.record_goal.goalMessage.goal.template_name = this.templateRecordElement.value;
       this.record_goal.send();
     }
 
@@ -426,8 +543,8 @@ class App {
     }
 
     private setupCameraCorrectionsRosTopic() {
-      this.correction_topic.subscribe((message: Message) => {
-            this.cameraCorrectionElement.src = 'data:image/jpeg:base64' + message.data;
+      this.camera_correction_topic.subscribe((message: Message) => {
+            this.cameraCorrectionElement.src = 'data:image/jpeg:base64,' + message.data;
         });
     }
 
