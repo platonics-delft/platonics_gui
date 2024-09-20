@@ -440,7 +440,7 @@ class App {
         this.availableTemplates.unshift("---select---");
         this.updateTemplatesDropdown();
       });
-      this.emptyMenu();
+      //this.emptyMenu();
     }
 
     private updateTemplatesDropdown() {
