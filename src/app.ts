@@ -215,10 +215,7 @@ class App {
           goalMessage: {
             skill_name: [],
             localize_box: false,
-            template_name: 
-            {
-              data: "default",
-            }
+            template_name: "default",
           },
         });
         this.execute_skill_goal.on('result', () => {
