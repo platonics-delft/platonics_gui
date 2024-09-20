@@ -1,6 +1,7 @@
 import { Ros, Topic, ActionClient, Goal, Service, ServiceRequest} from "roslib";
 import errorSnippet from "./audio/error.mp3";
 import succesSnippet from "./audio/success.mp3";
+import pausedSnippet from "./audio/paused.mp3";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -121,6 +122,7 @@ class App {
         }
         this.record_goal.on('feedback', (feedback) => {
           if (feedback.paused === true) {
+            this.playSnippet('paused');
             this.statusPausedElement.classList.add("status-active");
           }
           if (feedback.spiraling === true) {
@@ -410,6 +412,7 @@ class App {
       this.audioSnippets = {
           success: new Audio(succesSnippet),
           error: new Audio(errorSnippet),
+          paused: new Audio(pausedSnippet),
       };
     }
 
