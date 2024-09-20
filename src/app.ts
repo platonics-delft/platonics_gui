@@ -317,7 +317,7 @@ class App {
       const newItem = document.createElement("div");
       newItem.classList.add("menu-item");
       newItem.setAttribute("draggable", "true");
-      newItem.textContent = "SKILL_"+ skill_name;
+      newItem.textContent = skill_name;
       this.order_menu.appendChild(newItem);
       this.addDragAndDropHandlers(newItem);
     }
