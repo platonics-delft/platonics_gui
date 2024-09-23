@@ -504,11 +504,13 @@ class App {
 
     public execute_skill() {
       var items = document.getElementsByClassName("menu-item");
-      this.execute_skill_goal.goalMessage.goal.skill_name = items[0].textContent || "";
+      console.log("executing skill")
+      this.execute_skill_goal.goalMessage.goal.skill_name = items[0].textContent;
+      console.log(items[0].textContent);
       this.execute_skill_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
       this.execute_skill_goal.goalMessage.goal.localize_box = this.localize;
       this.disable_all_main_buttons();
-      this.execute_goal.send();
+      this.execute_skill_goal.send();
     }
 
 
@@ -532,7 +534,7 @@ class App {
     public record() {
       this.statusRecordingElement.classList.add("status-active");
       this.record_goal.goalMessage.goal.skill_name = this.record_text_field.value;
-      this.record_goal.goalMessage.goal.template_name = this.templateRecordElement.value;
+      this.record_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
       this.record_goal.send();
     }
 
