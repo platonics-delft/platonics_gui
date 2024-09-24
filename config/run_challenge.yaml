@@ -31,3 +31,4 @@ windows:
       - roslaunch spacenav_node classic.launch --wait
       - cd src/platonics_gui; npm run start
       - rosrun skills_manager recording_node
+      - rosrun rviz rviz -d /home/mspahn/catkin_robothon/src/platonics_tools/config/config.rviz

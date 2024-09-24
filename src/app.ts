@@ -31,6 +31,7 @@ class App {
         this.cameraCorrectionElement = document.getElementById("img_corrections");
         this.trashBin = document.getElementById("trash-bin");
         this.localize_button = document.getElementById("localize_button");
+        this.automatic_template_button = document.getElementById("automatic_template");
         this.templateRecordElement = document.getElementById("template_name_record") as HTMLInputElement;
 
         this.statusRecordingElement = document.getElementById("statusRecording");
@@ -211,7 +212,7 @@ class App {
         });
 
         this.execute_skill_goal = new Goal({
-          actionClient: this.execute_client,
+          actionClient: this.execute_skill_client,
           goalMessage: {
             skill_name: [],
             localize_box: false,
@@ -226,7 +227,6 @@ class App {
         this.executing = false;
         this.recording = false;
         this.homing = false;
-        this.localize = false;
 
         this.abort_gripper_client = new ActionClient({
           ros: this.ros,
@@ -287,16 +287,6 @@ class App {
       this.abort_gripper_goal.goalMessage.goal.open = false;
       this.abort_gripper_goal.send();
     }
-
-    public toggleLocalize() {
-      this.localize = !this.localize;
-      if (this.localize) {
-        this.localize_button.style.backgroundColor = "green";
-      } else {
-        this.localize_button.style.backgroundColor = "red";
-      }
-    }
-
 
 
     public selectTrajectory() {
@@ -507,8 +497,13 @@ class App {
       console.log("executing skill")
       this.execute_skill_goal.goalMessage.goal.skill_name = items[0].textContent;
       console.log(items[0].textContent);
-      this.execute_skill_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
-      this.execute_skill_goal.goalMessage.goal.localize_box = this.localize;
+      if this.automatic_template_button.checked {
+        this.execute_skill_goal.goalMessage.goal.template_name = "";
+      } else {
+        this.execute_skill_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
+      }
+      this.execute_skill_goal.goalMessage.goal.localize_box = this.localize_button.checked;
+      //this.localize_button.checked;
       this.disable_all_main_buttons();
       this.execute_skill_goal.send();
     }
@@ -524,7 +519,7 @@ class App {
       }
       this.execute_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
       this.execute_goal.goalMessage.goal.skill_names = skill_names;
-      this.execute_goal.goalMessage.goal.localize_box = this.localize;
+      this.execute_goal.goalMessage.goal.localize_box = this.localize_button.checked;
       this.disable_all_main_buttons();
       this.execute_goal.send();
     }

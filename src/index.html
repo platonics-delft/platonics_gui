@@ -17,7 +17,10 @@
     <div class="content">
       <!-- stack items in the next div vertically-->
       <div class="content-vertical">
-        <select id="template_dropdown" class="dropdown" onchange="app.selectTemplate()">
+        <div class='content-horizontal'>
+          <select id="template_dropdown" class="dropdown" onchange="app.selectTemplate()">
+          <input type='checkbox' id='automatic_template'>
+        </div>
         <select id="trajectories_dropdown" class="dropdown" onchange="app.selectTrajectory()">
         <select id="skills_dropdown" class="dropdown" onchange="app.selectSkill()">
         </select>
@@ -25,7 +28,7 @@
         <div class='content-horizontal'>
           <button class="main-button" onclick="app.execute()">Execute</button>
           <button class="main-button" onclick="app.execute_skill()">ExecuteSkill</button>
-          <input type="checkbox" id="localize_button" onclick="app.toggleLocalize()">
+          <input type="checkbox" id="localize_button">
         </div>
 
       </div>
