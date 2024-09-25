@@ -46,9 +46,6 @@ for
 Then, you can run the GUI by running the following command:
 
 ```bash
-
-
-
 The whole system is being launch with 
 ```bash
 cd /path/to/platonics_gui/config
