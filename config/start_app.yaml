@@ -1,4 +1,4 @@
-session_name: fabrics_background
+session_name: PlatonicsGui
 shell_command_before:
 - cd /home/mspahn/catkin_robothon
 - source devel/setup.zsh
