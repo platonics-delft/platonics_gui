@@ -591,7 +591,7 @@ class App {
 
 // Instantiate the App class when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new App('ws://localhost:9090');
+    const app = new App('ws://172.16.0.3:9090');
     // Expose the app instance to the global scope for the button's onclick handler
     (window as any).app = app;
 });
