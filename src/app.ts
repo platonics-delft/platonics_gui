@@ -94,7 +94,7 @@ class App {
           goalMessage: {
             height: 0.25,
             side: 0.0,
-            front: 0.45,
+            front: 0.46,
           },
         });
         this.home_goal.on('result', () => {
