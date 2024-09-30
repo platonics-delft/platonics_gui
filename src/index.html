@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="header">
-        <button class="main-button" onclick="app.publishMessage()">Start</button>
+        <!--button class="main-button" onclick="app.publishMessage()">Start</button-->
         <button class="main-button" onclick="app.sendHome()">Home</button>
         <button class="abort-button" onclick="app.cancel()">Abort</button>
         <button class="abort-button" onclick="app.abort_gripper()">Abort Gripper</button>
@@ -19,7 +19,7 @@
       <div class="content-vertical">
         <div class='content-horizontal'>
           <select id="template_dropdown" class="dropdown" onchange="app.selectTemplate()">
-          <input type='checkbox' id='automatic_template'>
+          <!--input type='checkbox' id='automatic_template'-->
         </div>
         <select id="trajectories_dropdown" class="dropdown" onchange="app.selectTrajectory()">
         <select id="skills_dropdown" class="dropdown" onchange="app.selectSkill()">
@@ -27,7 +27,7 @@
         <button class="main-button" onclick="app.refreshTemplates()">Refresh</button>
         <div class='content-horizontal'>
           <button class="main-button" onclick="app.execute()">Execute</button>
-          <button class="main-button" onclick="app.execute_skill()">ExecuteSkill</button>
+          <!--button class="main-button" onclick="app.execute_skill()">ExecuteSkill</button-->
           <input type="checkbox" id="localize_button">
         </div>
 
@@ -90,13 +90,13 @@
         </div>
         <div class="camera-visualization">
           <!--img id="img_corrections" alt="CORRECTIONS"/-->
-          <img src="./img/platonics_logo.png" alt="Platonics Logo"/>
+          <img style='scale:50%' src="./img/platonics_logo.png" alt="Platonics Logo"/>
         </div>
     </div>
 
     <div class="bottom-section">
         <div class="debug-window" id="debug_topic_display">Debug Messages</div>
-        <div class="chat-window">Chat</div>
+        <!--div class="chat-window">Chat</div-->
     </div>
     <script src="./app.ts"></script>
 </body>

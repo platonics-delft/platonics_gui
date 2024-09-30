@@ -56,7 +56,7 @@ class App {
         this.ros = new Ros({ url: rosUrl });
         this.debug_topic = new Topic({
             ros: this.ros,
-            name: "/debug_topic",
+            name: "/debug",
             messageType: "std_msgs/String",
         });
         this.recording_topic = new Topic({
@@ -158,8 +158,8 @@ class App {
         // execute client
         this.execute_client = new ActionClient({
           ros: this.ros,
-          serverName: '/lfdExecuteSequence',
-          actionName: 'skills_manager/LfdExecuteSequenceAction',
+          serverName: '/lfdExecuteSkillSequence',
+          actionName: 'skills_manager/LfdExecuteSkillSequenceAction',
         });
 
         this.execute_goal = new Goal({
