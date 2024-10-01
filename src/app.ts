@@ -101,6 +101,18 @@ class App {
           this.homing = false;
           this.enable_all_main_buttons();
         }
+        this.home_byod_goal = new Goal({
+          actionClient: this.home_client,
+          goalMessage: {
+            height: 0.15
+            side: 0.0,
+            front: 0.5,
+          },
+        });
+        this.home_byod_goal.on('result', () => {
+          this.homing = false;
+          this.enable_all_main_buttons();
+        }
 
         // record client
         this.record_client = new ActionClient({
@@ -490,6 +502,12 @@ class App {
       this.disable_all_main_buttons();
       this.homing = true;
       this.home_goal.send();
+    }
+
+    public sendHomeBYOD() {
+      this.disable_all_main_buttons();
+      this.homing = true;
+      this.home_byod_goal.send();
     }
 
     public execute_skill() {
