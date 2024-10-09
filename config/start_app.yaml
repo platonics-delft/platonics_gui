@@ -11,7 +11,7 @@ windows:
       - ssh platonics@172.16.0.99
       - source ~/Documents/eurobin_workspace_panda/devel/setup.bash
     panes:
-      - roslaunch franka_human_friendly_controllers cartesian_variable_impedance_controller.launch robot_ip:=172.16.0.2 arm_id:='panda' gui:=False
+      - roslaunch franka_human_friendly_controllers cartesian_variable_impedance_controller.launch robot_ip:=172.16.0.2 arm_id:='panda' gui:=False use_external_model:=True
   - window_name: platonics_vision
     layout: tiled
     panes:
