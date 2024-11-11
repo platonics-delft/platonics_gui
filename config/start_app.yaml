@@ -32,3 +32,4 @@ windows:
       - cd src/platonics_gui; npm run start
       - rosrun skills_manager recording_node
       - rosrun rviz rviz -d /home/mspahn/catkin_robothon/src/platonics_tools/config/config.rviz
+        #- rosrun rqt_reconfigure rqt_reconfigure

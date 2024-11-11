@@ -33,6 +33,7 @@ class App {
         this.localize_button = document.getElementById("localize_button");
         this.automatic_template_button = document.getElementById("automatic_template");
         this.templateRecordElement = document.getElementById("template_name_record") as HTMLInputElement;
+        this.speedFactorElement = document.getElementById("speed_factor");
 
         this.statusRecordingElement = document.getElementById("statusRecording");
         this.statusExecutingElement = document.getElementById("statusExecuting");
@@ -106,7 +107,7 @@ class App {
           goalMessage: {
             height: 0.15
             side: 0.0,
-            front: 0.5,
+            front: 0.45,
           },
         });
         this.home_byod_goal.on('result', () => {
@@ -124,7 +125,7 @@ class App {
         this.record_goal = new Goal({
           actionClient: this.record_client,
           goalMessage: {
-            skill_name: "mariano",
+            skill_name: "default",
           },
         });
         this.record_goal.on('result', () => {
@@ -179,6 +180,7 @@ class App {
           goalMessage: {
             skill_names: [],
             localize_box: false,
+            speed_factor: 1,
             template_name: 
             {
               data: "default",
@@ -537,6 +539,8 @@ class App {
       }
       this.execute_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
       this.execute_goal.goalMessage.goal.skill_names = skill_names;
+      // convert string to float
+      this.execute_goal.goalMessage.goal.speed_factor = parseFloat(this.speedFactorElement.value);
       this.execute_goal.goalMessage.goal.localize_box = this.localize_button.checked;
       this.disable_all_main_buttons();
       this.execute_goal.send();
@@ -545,6 +549,7 @@ class App {
 
 
     public record() {
+      this.disable_all_main_buttons();
       this.statusRecordingElement.classList.add("status-active");
       this.record_goal.goalMessage.goal.skill_name = this.record_text_field.value;
       this.record_goal.goalMessage.goal.template_name = this.templatesDropdownElement.value;
