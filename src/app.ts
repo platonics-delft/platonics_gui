@@ -10,9 +10,11 @@ function sleep(ms: number): Promise<void> {
 class App {
     private topicDisplayElement: HTMLElement;
     private cameraElement: HTMLElement;
+    private cameraCorrectionElement: HTMLElement;
     private ros: Ros;
     private topic: Topic;
     private camera_topic: Topic;
+    private camera_correction_topic_compressed: Topic;
     private trajectoriesDropdownElement: HTMLSelectElement;
 
     constructor(rosUrl: string) {
@@ -29,6 +31,9 @@ class App {
 
         this.templatesDropdownElement = document.getElementById("template_dropdown") as HTMLSelectElement;
         this.cameraCorrectionElement = document.getElementById("img_corrections");
+        if (!this.cameraCorrectionElement) {
+            throw new Error(`Element with ID img_corrections not found.`);
+        }
         this.trashBin = document.getElementById("trash-bin");
         this.localize_button = document.getElementById("localize_button");
         this.automatic_template_button = document.getElementById("automatic_template");
@@ -71,9 +76,9 @@ class App {
             messageType: 'sensor_msgs/CompressedImage',
         });
 
-        this.camera_correction_topic = new Topic({
+        this.camera_correction_topic_compressed = new Topic({
             ros: this.ros,
-            name: '/SIFT_corrections',
+            name: '/sift_me_now/compressed',
             messageType: 'sensor_msgs/CompressedImage',
         });
 
@@ -563,10 +568,13 @@ class App {
     }
 
     private setupCameraCorrectionsRosTopic() {
-      this.camera_correction_topic.subscribe((message: Message) => {
-            this.cameraCorrectionElement.src = 'data:image/jpeg:base64,' + message.data;
+      this.camera_correction_topic_compressed.subscribe((message: Message) => {
+          console.log("Received camera correction");
+          //console.log(message.data);
+          this.cameraCorrectionElement.src = 'data:image/jpeg;base64,' + message.data;
         });
     }
+
 
 
    private setupRosTopic() {
