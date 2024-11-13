@@ -622,7 +622,9 @@ class App {
 
 // Instantiate the App class when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new App('ws://172.16.0.3:9090');
+    const wsUrl = "ws://" + process.env.VITE_IP + ":9090";
+    console.log(wsUrl);
+    const app = new App(wsUrl);
     // Expose the app instance to the global scope for the button's onclick handler
     (window as any).app = app;
 });
