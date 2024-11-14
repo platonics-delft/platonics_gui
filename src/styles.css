@@ -8,6 +8,11 @@ body {
     background-color: #f0f0f0;
 }
 
+.label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .header {
     display: flex;
     justify-content: center;
@@ -26,6 +31,25 @@ body {
     cursor: pointer;
 }
 
+.main-button:hover {
+    background-color: darkred;
+}
+
+.feature-button {
+    background-color: #7272FE;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.feature-button:hover {
+    background-color: #4F4FE1;
+}
+
 .abort-button {
   background-color: white;
   color: red;
@@ -40,6 +64,12 @@ body {
 
 .main-button:hover {
     background-color: darkred;
+}
+
+.main-button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
 }
 
 .content {
@@ -228,5 +258,42 @@ select:hover {
     align-items: center;
     margin-bottom: 20px;
 }
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.custom-slider {
+  width: 200px;
+  appearance: none;
+  height: 8px;
+  background: #ccc;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.custom-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4CAF50;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.custom-slider:active {
+  background: #999; /* Color changes while active (dragging) */
+}
+
+.slider-input {
+  width: 60px;
+  padding: 4px;
+  text-align: center;
+}
+
 
 

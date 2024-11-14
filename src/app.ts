@@ -17,7 +17,8 @@ class App {
     private camera_correction_topic_compressed: Topic;
     private trajectoriesDropdownElement: HTMLSelectElement;
 
-    constructor(rosUrl: string) {
+    constructor(ipAddress: string) {
+        this.ipAddressElement = document.getElementById("ipAddressElement") as HTMLInputElement;
         this.loadAudioSnippets();
         this.debugTopicDisplayElement = document.getElementById("debug_topic_display");
         if (!this.debugTopicDisplayElement) {
@@ -58,7 +59,12 @@ class App {
         this.availableTemplates = [];
 
         this.record_text_field = document.getElementById("recording_name") as HTMLInputElement;
+        this.startApp(ipAddress);
+      }
 
+      private startApp(ipAddress: string) {
+        const rosUrl = "ws://" + ipAddress + ":9090";
+        console.log("Connecting to ROS at " + rosUrl);
         this.ros = new Ros({ url: rosUrl });
         this.debug_topic = new Topic({
             ros: this.ros,
@@ -78,7 +84,7 @@ class App {
 
         this.camera_correction_topic_compressed = new Topic({
             ros: this.ros,
-            name: '/sift_me_now/compressed',
+            name: '/sift_compressed/compressed',
             messageType: 'sensor_msgs/CompressedImage',
         });
 
@@ -278,11 +284,23 @@ class App {
           serviceType: 'skills_manager/ListTemplates',
         });
         this.list_skills = new Service({
-          ros: this .ros,
+          ros: this.ros,
           name: '/list_skills',
           serviceType: 'skills_manage/ListSkills',
         });
+
+        this.reset_transformation = new Service({
+          ros: this.ros,
+          name: '/reset_transformation',
+          serviceType: 'std_srvs/Trigger',
+        });
         this.refreshTemplates();
+    }
+
+    public restartApp() {
+      const ip_address = this.ipAddressElement.value;
+      this.ros.close();
+      this.startApp(ip_address);
     }
 
     public cancel() {
@@ -452,6 +470,12 @@ class App {
       //this.emptyMenu();
     }
 
+    public resetTransformation() {
+      this.reset_transformation.callService(new ServiceRequest({}), (result) => {
+        console.log("Reset transformation");
+      });
+    }
+
     private updateTemplatesDropdown() {
       const sortedTemplates = [...this.availableTemplates].sort();
       this.templatesDropdownElement.innerHTML = '';
@@ -489,8 +513,6 @@ class App {
       var buttons = document.getElementsByClassName("main-button");
       for (var i = 0; i < buttons.length; i++) {
         buttons[i].setAttribute("disabled", "true");
-        buttons[i].style.backgroundColor = "gray";
-
       }
     }
 
@@ -498,7 +520,6 @@ class App {
       var buttons = document.getElementsByClassName("main-button");
       for (var i = 0; i < buttons.length; i++) {
         buttons[i].removeAttribute("disabled");
-        buttons[i].style.backgroundColor = "red";
       }
     }
 
@@ -622,10 +643,9 @@ class App {
 
 // Instantiate the App class when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const wsUrl = "ws://" + process.env.VITE_IP + ":9090";
-    console.log(wsUrl);
-    const app = new App(wsUrl);
+    const app = new App("172.16.0.3");
     // Expose the app instance to the global scope for the button's onclick handler
     (window as any).app = app;
 });
+
 

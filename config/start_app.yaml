@@ -4,6 +4,7 @@ shell_command_before:
 - source devel/setup.zsh
 - export ROS_MASTER_URI=http://172.16.0.99:11311
 - export ROS_IP=172.16.0.3
+- export VITE_IP=172.16.0.3
 windows:
   - window_name: controller
     layout: tiled
@@ -11,6 +12,7 @@ windows:
       - ssh platonics@172.16.0.99
       - source ~/Documents/eurobin_workspace_panda/devel/setup.bash
     panes:
+      # - while true; do echo "No controller this time"; sleep 5; done
       - roslaunch franka_human_friendly_controllers cartesian_variable_impedance_controller.launch robot_ip:=172.16.0.2 arm_id:='panda' gui:=False use_external_model:=True
   - window_name: platonics_vision
     layout: tiled
@@ -27,9 +29,7 @@ windows:
   - window_name: utils
     layout: tiled
     panes: 
-      - rosrun platonics_tools nodes_checker
       - roslaunch spacenav_node classic.launch --wait
+      - roslaunch platonics_tools image_compressors.launch --wait
       - cd src/platonics_gui; npm run start
       - rosrun skills_manager recording_node
-      - rosrun rviz rviz -d /home/mspahn/catkin_robothon/src/platonics_tools/config/config.rviz
-        #- rosrun rqt_reconfigure rqt_reconfigure
